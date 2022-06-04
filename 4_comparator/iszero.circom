@@ -10,4 +10,3 @@ template IsZero() {
     in*out === 0;
 }
 
-

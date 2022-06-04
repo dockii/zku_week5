@@ -2,6 +2,7 @@ pragma circom 2.0.3;
 include "../node_modules/circomlib/circuits/comparators.circom";
 include "../node_modules/circomlib/circuits/poseidon.circom";
 include "./hasher.circom";
+include "./multipliers.circom";
 
 // if s == 0 returns [in[0], in[1]]
 // if s == 1 returns [in[1], in[0]]
@@ -47,6 +48,12 @@ template ManyMerkleTreeChecker(levels, length, nInputs) {
     // [assignment] verify that the resultant hash (computed merkle root)
     // is in the set of roots received as input
     // Note that running test.sh should create a valid proof in current circuit, even though it doesn't do anything.
+    component multiplier = MultiplierN(levels); // multiply differences between every input root and the calculated root
+    for (var i = 0; i < length; i++) {
+        log(hashers[levels-1].hash - roots[i]);
+        multiplier.in[i] <== hashers[levels-1].hash - roots[i]; // difference between input root-i and the calculated root
+    }
+    multiplier.out === 0; // multiplication should yield zero if the calculated root is equal to one of the input roots (i.e. one of the differences above must have yielded zero)
 }
 
 component main = ManyMerkleTreeChecker(2, 2, 3);

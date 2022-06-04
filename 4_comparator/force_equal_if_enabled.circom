@@ -11,4 +11,5 @@ template ForceEqualIfEnabled() {
     (1 - isz.out)*enabled === 0;
 }
 
-component main = ForceEqualIfEnabled()
+// making signals public because a circuit needs at least one of these: and output or a public intput or an output
+component main{public[enabled, in]} = ForceEqualIfEnabled();
